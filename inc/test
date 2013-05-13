@@ -1,0 +1,5 @@
+if [ ! -e _virtualenv ]; then
+   bash inc/make-virtualenv _virtualenv
+fi
+rm -r _test
+CACHE_VIRTUALENV=$PWD/_virtualenv ./newproject _test

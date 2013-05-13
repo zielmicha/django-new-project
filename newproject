@@ -1,0 +1,11 @@
+#!/bin/bash
+base=$PWD/$(dirname $0)
+dir=$1
+mkdir $dir || exit 1
+cd $dir || exit 1
+if [ "$CACHE_VIRTUALENV" != "" ]; then
+    cp -a "$CACHE_VIRTUALENV" env
+else
+    bash $base/inc/make-virtualenv env
+fi
+. env/bin/activate
