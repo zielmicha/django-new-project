@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<form class="form-horizontal" action="{% url 'django.contrib.auth.views.login' %}" method="POST">{% csrf_token %}
+  <fieldset>
+    <legend>Login</legend>
+    {% if form.non_field_errors %}
+    <br><div class="alert alert-error alert-block">
+      <a class="close" data-dismiss="alert">×</a>
+      <h4 class="alert-heading">Error</h4>
+      {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+    <div class="control-group {% if form.non_field_errors %}error{% endif %}">
+      <label class="control-label" for="input01">User name:</label>
+      <div class="controls">
+        <input name="username" type="text" id="input01">
+      </div>
+    </div>
+    <div class="control-group {% if form.non_field_errors %}error{% endif %}">
+      <label class="control-label" for="input02">Password:</label>
+      <div class="controls">
+        <input name="password" type="password" id="input02">
+      </div>
+    </div>
+    <div class="control-group">
+      <div class="controls">
+        <input class="btn btn-primary" type="submit" value="Login">
+      </div>
+    </div>
+    <input type="hidden" name="next" value="{{ next }}">
+  </fieldset>
+</form>
+{% endblock %}

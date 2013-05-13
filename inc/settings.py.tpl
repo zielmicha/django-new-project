@@ -32,6 +32,7 @@ STATIC_ROOT = base + '/static'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     base + '/[[name]]/static',
+    base + '/bootstrap/docs',
 )
 
 STATICFILES_FINDERS = (

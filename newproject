@@ -3,12 +3,21 @@ if [ "$project_name" = "" ]; then
     read -p "Project name: " project_name
 fi
 base=$PWD/$(dirname $0)
-CACHE_VIRTUALENV=$PWD/.virtualenv
+CACHE=$PWD/.cache
+CACHE_VIRTUALENV=$PWD/.cache/virtualenv
+CACHE_BOOTSTRAP=$PWD/.cache/bootstrap
+BOOTSTRAP_URL=https://github.com/twitter/bootstrap.git
 dir=$1
 mkdir $dir || exit 1
 cd $dir || exit 1
+if [ ! -e $CACHE ]; then
+    mkdir $CACHE
+fi
 if [ ! -e $CACHE_VIRTUALENV ]; then
     bash $base/inc/make-virtualenv $CACHE_VIRTUALENV
+fi
+if [ ! -e $CACHE_BOOTSTRAP ]; then
+    git clone $BOOTSTRAP_URL $CACHE_BOOTSTRAP
 fi
 cp -a $CACHE_VIRTUALENV env
 . env/bin/activate
@@ -26,12 +35,32 @@ format $base/inc/settings.py.tpl > webapp/settings.py
 format $base/inc/gitignore.tpl > .gitignore
 format $base/inc/manage.py.tpl > manage.py
 format $base/inc/manage_real.py.tpl > manage_real.py
+mkdir $project_name/templates
+format $base/inc/base.html.tpl > $project_name/templates/base.html
+cp -r $base/inc/templates/* $project_name/templates
+format $base/inc/views.py.tpl > $project_name/views.py
+mkdir $project_name/static
+format $base/inc/main.css.tpl > $project_name/static/main.css
 pip freeze > requirements.txt
 find -name '*.pyc' | xargs rm
 
 ./manage.py syncdb --noinput || exit 1
 
 git init
+
+
+# add Bootstrap submodule without fetching everything over network
+git submodule add $CACHE_BOOTSTRAP
+git submodule update || exit 1
+git config submodule.bootstrap.url $BOOTSTRAP_URL
+(cd bootstrap; git remote set-url origin $BOOTSTRAP_URL)
+cat >.gitmodules <<EOF
+[submodule "bootstrap"]
+        path = bootstrap
+        url = $BOOTSTRAP_URL
+EOF
+git submodule update
+
 git add .
 git commit -m "create project $project_name using django-new-project"
 
