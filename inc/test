@@ -1,5 +1,3 @@
-if [ ! -e _virtualenv ]; then
-   bash inc/make-virtualenv _virtualenv
-fi
-rm -r _test
-CACHE_VIRTUALENV=$PWD/_virtualenv ./newproject _test
+rm -rf _test
+export project_name="dertest"
+./newproject _test

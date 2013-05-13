@@ -1,3 +1,4 @@
+echo "Setting up Django virtualenv (just once for all apps)"
 virtualenv $1
 . $1/bin/activate
-pip install django
+pip install django django-evolution django-crispy-forms

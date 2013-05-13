@@ -1,11 +1,37 @@
 #!/bin/bash
+if [ "$project_name" = "" ]; then
+    read -p "Project name: " project_name
+fi
 base=$PWD/$(dirname $0)
+CACHE_VIRTUALENV=$PWD/.virtualenv
 dir=$1
 mkdir $dir || exit 1
 cd $dir || exit 1
-if [ "$CACHE_VIRTUALENV" != "" ]; then
-    cp -a "$CACHE_VIRTUALENV" env
-else
-    bash $base/inc/make-virtualenv env
+if [ ! -e $CACHE_VIRTUALENV ]; then
+    bash $base/inc/make-virtualenv $CACHE_VIRTUALENV
 fi
+cp -a $CACHE_VIRTUALENV env
 . env/bin/activate
+django-admin.py startproject webapp || exit 1
+mv webapp webapp_tmp
+mv webapp_tmp/* .
+rmdir webapp_tmp
+chmod +x ./manage.py
+./manage.py startapp $project_name || exit 1
+
+. $base/inc/templates.inc
+format $base/inc/urls.py.tpl > webapp/urls.py
+format $base/inc/urls_main.py.tpl > $project_name/urls.py
+format $base/inc/settings.py.tpl > webapp/settings.py
+format $base/inc/gitignore.tpl > .gitignore
+format $base/inc/manage.py.tpl > manage.py
+format $base/inc/manage_real.py.tpl > manage_real.py
+find -name '*.pyc' | xargs rm
+
+./manage.py syncdb --noinput || exit 1
+
+git init
+git add .
+git commit -m "create project $project_name using django-new-project"
+
+echo "READY!"
