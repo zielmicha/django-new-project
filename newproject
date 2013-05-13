@@ -26,6 +26,7 @@ format $base/inc/settings.py.tpl > webapp/settings.py
 format $base/inc/gitignore.tpl > .gitignore
 format $base/inc/manage.py.tpl > manage.py
 format $base/inc/manage_real.py.tpl > manage_real.py
+pip freeze > requirements.txt
 find -name '*.pyc' | xargs rm
 
 ./manage.py syncdb --noinput || exit 1
