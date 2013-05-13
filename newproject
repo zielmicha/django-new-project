@@ -41,6 +41,7 @@ cp -r $base/inc/templates/* $project_name/templates
 format $base/inc/views.py.tpl > $project_name/views.py
 mkdir $project_name/static
 format $base/inc/main.css.tpl > $project_name/static/main.css
+format $base/inc/README.md.tpl > README.md
 pip freeze > requirements.txt
 find -name '*.pyc' | xargs rm
 
