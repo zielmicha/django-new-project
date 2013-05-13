@@ -4,7 +4,7 @@
 
     git submodule --init update
     virtualenv env/
-    env/bin/activate
+    source env/bin/activate
     pip install -r requirements.txt
 
 ## Credits
